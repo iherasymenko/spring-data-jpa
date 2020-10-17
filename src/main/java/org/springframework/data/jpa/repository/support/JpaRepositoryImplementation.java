@@ -15,6 +15,8 @@
  */
 package org.springframework.data.jpa.repository.support;
 
+import java.io.Serializable;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
@@ -28,7 +30,7 @@ import org.springframework.data.repository.NoRepositoryBean;
  * @author Jens Schauder
  */
 @NoRepositoryBean
-public interface JpaRepositoryImplementation<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
+public interface JpaRepositoryImplementation<T, ID extends Serializable> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
 	/**
 	 * Configures the {@link CrudMethodMetadata} to be used with the repository.

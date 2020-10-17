@@ -17,6 +17,7 @@ package org.springframework.data.jpa.repository.support;
 
 import static org.springframework.data.jpa.repository.query.QueryUtils.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,7 +78,7 @@ import org.springframework.util.Assert;
  */
 @Repository
 @Transactional(readOnly = true)
-public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T, ID> {
+public class SimpleJpaRepository<T, ID extends Serializable> implements JpaRepositoryImplementation<T, ID> {
 
 	private static final String ID_MUST_NOT_BE_NULL = "The given id must not be null!";
 
@@ -452,76 +453,6 @@ public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T
 	@Override
 	public List<T> findAll(@Nullable Specification<T> spec, Sort sort) {
 		return getQuery(spec, sort).getResultList();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#findOne(org.springframework.data.domain.Example)
-	 */
-	@Override
-	public <S extends T> Optional<S> findOne(Example<S> example) {
-
-		try {
-			return Optional
-					.of(getQuery(new ExampleSpecification<S>(example, escapeCharacter), example.getProbeType(), Sort.unsorted())
-							.getSingleResult());
-		} catch (NoResultException e) {
-			return Optional.empty();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#count(org.springframework.data.domain.Example)
-	 */
-	@Override
-	public <S extends T> long count(Example<S> example) {
-		return executeCountQuery(
-				getCountQuery(new ExampleSpecification<S>(example, escapeCharacter), example.getProbeType()));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#exists(org.springframework.data.domain.Example)
-	 */
-	@Override
-	public <S extends T> boolean exists(Example<S> example) {
-		return !getQuery(new ExampleSpecification<S>(example, escapeCharacter), example.getProbeType(), Sort.unsorted())
-				.getResultList().isEmpty();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#findAll(org.springframework.data.domain.Example)
-	 */
-	@Override
-	public <S extends T> List<S> findAll(Example<S> example) {
-		return getQuery(new ExampleSpecification<S>(example, escapeCharacter), example.getProbeType(), Sort.unsorted())
-				.getResultList();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#findAll(org.springframework.data.domain.Example, org.springframework.data.domain.Sort)
-	 */
-	@Override
-	public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-		return getQuery(new ExampleSpecification<S>(example, escapeCharacter), example.getProbeType(), sort)
-				.getResultList();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.query.QueryByExampleExecutor#findAll(org.springframework.data.domain.Example, org.springframework.data.domain.Pageable)
-	 */
-	@Override
-	public <S extends T> Page<S> findAll(Example<S> example, Pageable pageable) {
-
-		ExampleSpecification<S> spec = new ExampleSpecification<>(example, escapeCharacter);
-		Class<S> probeType = example.getProbeType();
-		TypedQuery<S> query = getQuery(new ExampleSpecification<>(example, escapeCharacter), probeType, pageable);
-
-		return isUnpaged(pageable) ? new PageImpl<>(query.getResultList()) : readPage(query, probeType, pageable, spec);
 	}
 
 	/*
