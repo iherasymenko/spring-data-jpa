@@ -111,7 +111,7 @@ public enum PersistenceProvider implements QueryExtractor, ProxyIdAccessor {
 
 		@Override
 		public String extractQueryString(Query query) {
-			throw new UnsupportedOperationException();
+			return ((JpaQuery<?>) query).getDatabaseQuery().getJPQLString();
 		}
 
 		/*
@@ -331,7 +331,7 @@ public enum PersistenceProvider implements QueryExtractor, ProxyIdAccessor {
 		 */
 		HibernateScrollableResultsIterator(Query jpaQuery) {
 
-			org.hibernate.Query query = jpaQuery.unwrap(org.hibernate.Query.class);
+			org.hibernate.query.Query<?> query = jpaQuery.unwrap(org.hibernate.query.Query.class);
 			this.scrollableResults = query.setReadOnly(TransactionSynchronizationManager.isCurrentTransactionReadOnly())//
 					.scroll(ScrollMode.FORWARD_ONLY);
 		}
@@ -347,7 +347,10 @@ public enum PersistenceProvider implements QueryExtractor, ProxyIdAccessor {
 				throw new NoSuchElementException("No ScrollableResults");
 			}
 
-			return scrollableResults.get()[0];
+			// Cast needed for Hibernate 6 compatibility
+			Object[] row = (Object[]) scrollableResults.get();
+
+			return row.length == 1 ? row[0] : row;
 		}
 
 		/*

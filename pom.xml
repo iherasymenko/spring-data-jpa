@@ -22,8 +22,7 @@
 		<dist.key>DATAJPA</dist.key>
 
 		<eclipselink>2.7.5</eclipselink>
-		<hibernate>5.0.12.Final</hibernate>
-		<maven.test.skip>true</maven.test.skip>
+		<hibernate>5.4.8.Final</hibernate>
 		<mockito>2.19.1</mockito>
 		<hibernate.groupId>org.hibernate</hibernate.groupId>
 		<springdata.commons>2.3.4.RELEASE</springdata.commons>
@@ -31,6 +30,7 @@
 		<java-module-name>spring.data.jpa</java-module-name>
 
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<maven.test.skip>true</maven.test.skip>
 
 	</properties>
 
@@ -216,7 +216,7 @@
 
 		<dependency>
 			<groupId>${hibernate.groupId}</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
+			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate}</version>
 			<optional>true</optional>
 		</dependency>
